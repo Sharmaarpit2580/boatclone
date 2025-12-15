@@ -8,7 +8,7 @@ import { useAuth } from '../../components/auth/AuthContext';
 import FilterSidebar from '../../components/filtersidebar/FilterSidebar';
 import ProductList, { productsData } from '../../components/productlist/ProductList';
 import Navbar from '../../components/navbar/Navbar';
-import Footer from '../../components/footer/footer';
+import Footer from '../../components/footer/Footer.jsx';
 
 export default function Product() {
   const navigate = useNavigate();
