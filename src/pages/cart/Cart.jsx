@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../components/cart/CartContext';
 import Navbar from '../../components/navbar/Navbar';
-import Footer from '../../components/footer/Footer';
+import Footer from '../../components/footer/Footer.jsx';
 import styles from './Cart.module.css';
 
 export default function Cart() {
