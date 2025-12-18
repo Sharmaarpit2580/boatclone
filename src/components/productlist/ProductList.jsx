@@ -34,7 +34,28 @@ export const productsData = [
   { id: 27, name: 'Wave Edge', price: '₹1,999', rating: 4.4, tag: 'Hot', category: 'smartwatch', image: 'https://m.media-amazon.com/images/S/aplus-media-library-service-media/30733fef-d24a-430a-a667-4658376f44fb.__CR0,0,600,450_PT0_SX600_V1___.png' },
   { id: 28, name: 'Nirvana 751', price: '₹2,499', rating: 4.6, tag: 'Premium', category: 'headphones', image: 'https://www.gizmochina.com/wp-content/uploads/2022/02/boAt-Nirvana-751-ANC.jpg?x70461' },
 ]
+function getCartButtonState({ user, inCart, added, ctaLabel }) {
+  if (!user) {
+    return {
+      label: 'Sign in to buy',
+      disabled: false,
+      variant: 'needAuth',
+    };
+  }
 
+  if (added) {
+    return {
+      label: '✓ Added!',
+      disabled: true,
+      variant: 'justAdded',
+    };
+  }
+  return {
+    label: ctaLabel || 'Add to cart',
+    disabled: false,
+    variant: 'default',
+  };
+}
 export default function ProductList({
   products,
   addedItems = {},
@@ -42,9 +63,9 @@ export default function ProductList({
   onAddToCart = () => {},
   onProductClick,
   ctaLabel = 'Add to Cart',
+  onViewAll,
 }) {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
   const { user } = useAuth();
   const handleProductClick = (product) => {
     if (onProductClick) {
@@ -55,10 +76,17 @@ export default function ProductList({
   }
 
   return (
+    
     <div className={styles.grid}>
       {products.map(item => {
         const added = addedItems[item.id]
         const inCart = isInCart(item.id)
+        const { label, disabled, variant } = getCartButtonState({
+          user,
+          inCart,
+          added,
+          ctaLabel,
+        });
         return (
           <article key={item.id} className={styles.card}>
             <div className={styles.badge}>{item.tag}</div>
@@ -81,5 +109,6 @@ export default function ProductList({
         )
       })}
     </div>
+    
   )
 }

@@ -22,7 +22,10 @@ export default function SignIn() {
 
     navigate('/', { replace: true })
   }
-
+  const handleGoogleSignIn = () => {
+    // Demo redirect – real app me yahan OAuth / Firebase hoga
+    window.location.href = 'https://accounts.google.com/signin'
+  }
   return (
     <AuthLayout
       title="Welcome back to the boAt crew"
@@ -70,7 +73,7 @@ export default function SignIn() {
 
         <div className={styles.divider}>or</div>
 
-        <button type="button" className={styles.secondaryButton}>
+        <button type="button" className={styles.secondaryButton} onClick={handleGoogleSignIn}>
           <span aria-hidden="true">⚡</span> Continue with Google
         </button>
       </form>

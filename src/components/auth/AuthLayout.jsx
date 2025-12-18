@@ -22,7 +22,7 @@ export default function AuthLayout({
           <div className={styles.heroContent}>
             <div className={styles.branding}>
               <img
-                src="https://cdn.shopify.com/s/files/1/0057/8938/4802/files/boat-logo-new.svg?v=1682421521"
+                src="https://i.pinimg.com/736x/1e/42/b6/1e42b6fe43f65985bb8c61167376d290.jpg"
                 alt="boAt logo"
               />
               <span className={styles.badge}>Lifestyle</span>

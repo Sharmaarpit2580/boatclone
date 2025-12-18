@@ -1,3 +1,4 @@
+// src/pages/products/Product.jsx - ✅ CATEGORY FILTER FIXED VERSION
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Product.module.css';
@@ -14,10 +15,10 @@ export default function Product() {
   const navigate = useNavigate();
   const { addToCart, cart } = useCart();
   const { searchQuery } = useSearch();
-  const { activeFilter, selectedCategory } = useFilter(); // sirf nav filters ke liye
+  const { activeFilter, selectedCategory } = useFilter(); // nav filters ke liye
   const { user } = useAuth();
 
-  // 👉 yaha sidebar ke filters ka local state
+  // 👉 Sidebar filters local state
   const [sidebarFilters, setSidebarFilters] = useState({
     sortBy: 'default',
     categories: [],
@@ -47,32 +48,10 @@ export default function Product() {
   const filteredProducts = useMemo(() => {
     let filtered = productsData;
 
-    // 1) navigation filters
-    if (activeFilter === 'category' && selectedCategory) {
-      filtered = filtered.filter(
-        (product) => product.category === selectedCategory
-      );
-    } else if (activeFilter === 'offers') {
-      filtered = filtered.filter(
-        (product) =>
-          product.tag === 'Hot' ||
-          product.tag === 'Bestseller' ||
-          parseFloat(product.price.replace(/[₹,]/g, '')) < 2000
-      );
-    } else if (activeFilter === 'new') {
-      filtered = filtered.filter((product) => product.tag === 'New');
-    } else if (activeFilter === 'bestseller') {
-      filtered = filtered.filter((product) => product.tag === 'Bestseller');
-    } else if (activeFilter === 'gaming') {
-      filtered = filtered.filter((product) => product.tag === 'Gaming');
-    } else if (activeFilter === 'premium') {
-      filtered = filtered.filter((product) => product.tag === 'Premium');
-    } else if (activeFilter === 'budget') {
-      filtered = filtered.filter((product) => product.tag === 'Budget');
-    }
-    // activeFilter === 'explore' ka matlab: extra filter nahi lagana
+    // 🔥 DEBUG LOGS
+    console.log('🔍 DEBUG - activeFilter:', activeFilter, 'sidebarFilters:', sidebarFilters);
 
-    // 2) search filter
+    // 🔥 1) SEARCH FILTER PEHLE (highest priority)
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -83,8 +62,9 @@ export default function Product() {
       );
     }
 
-    // 3) sidebar filters
+    // 🔥 2) SIDEBAR FILTERS PEHLE (PRIORITY HIGH) 👈 FIXED!
     if (sidebarFilters.categories.length > 0) {
+      console.log('✅ Applying sidebar category filter:', sidebarFilters.categories);
       filtered = filtered.filter((product) =>
         sidebarFilters.categories.includes(product.category)
       );
@@ -111,7 +91,31 @@ export default function Product() {
       );
     }
 
-    // 4) sort
+    // 🔥 3) NAVIGATION FILTERS BAAD ME (lower priority)
+    if (activeFilter === 'category' && selectedCategory) {
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      );
+    } else if (activeFilter === 'offers') {
+      filtered = filtered.filter(
+        (product) =>
+          product.tag === 'Hot' ||
+          product.tag === 'Bestseller' ||
+          parseFloat(product.price.replace(/[₹,]/g, '')) < 2000
+      );
+    } else if (activeFilter === 'new') {
+      filtered = filtered.filter((product) => product.tag === 'New');
+    } else if (activeFilter === 'bestseller') {
+      filtered = filtered.filter((product) => product.tag === 'Bestseller');
+    } else if (activeFilter === 'gaming') {
+      filtered = filtered.filter((product) => product.tag === 'Gaming');
+    } else if (activeFilter === 'premium') {
+      filtered = filtered.filter((product) => product.tag === 'Premium');
+    } else if (activeFilter === 'budget') {
+      filtered = filtered.filter((product) => product.tag === 'Budget');
+    }
+
+    // 🔥 4) SORT LAST (sab filters ke baad)
     if (sidebarFilters.sortBy === 'price-low') {
       filtered = [...filtered].sort((a, b) => {
         const priceA = parseFloat(a.price.replace(/[₹,]/g, ''));
@@ -128,6 +132,7 @@ export default function Product() {
       filtered = [...filtered].sort((a, b) => b.rating - a.rating);
     }
 
+    console.log('📊 Final filtered products:', filtered.length);
     return filtered;
   }, [searchQuery, activeFilter, selectedCategory, sidebarFilters]);
 
@@ -184,7 +189,6 @@ export default function Product() {
         </header>
 
         <div className={styles.content}>
-          {/* 👉 yahi pe tumhara FilterSidebar use ho raha hai */}
           <FilterSidebar
             filters={sidebarFilters}
             onFilterChange={setSidebarFilters}

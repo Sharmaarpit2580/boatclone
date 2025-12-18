@@ -1,63 +1,83 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../../components/navbar/Navbar'
+import NavBar from '../../components/navbar/NavBar'
 import Banner from '../../components/banner/Banner'
-import Footer from '../../components/footer/Footer.jsx'
+import Footer from '../../components/footer/Footer'
 import ProductList, { productsData } from '../../components/productlist/ProductList'
-import { useFilter } from '../../components/filter/FilterContext'
+import { useCart } from '../../components/cart/CartContext'
+import { useAuth } from '../../components/auth/AuthContext'
+import styles from './Home.module.css'
+
 export default function Home() {
   const navigate = useNavigate()
-  const { setFilter, clearFilter } = useFilter()
+  const { addToCart, cart } = useCart()
+  const { user } = useAuth()
 
-  const handleProductClick = (product) => {
-    clearFilter()
-    setFilter('category', product.category)
+  const handleProductClick = () => {
     navigate('/products')
   }
 
-  const sections = [
-    { title: 'Earbuds', category: 'earbuds' },
-    { title: 'Headphones', category: 'headphones' },
-    { title: 'Smartwatches', category: 'smartwatch' },
-    { title: 'Speakers', category: 'speaker' },
-  ]
+  const handleViewAll = (category) => {
+    navigate(`/products?category=${encodeURIComponent(category)}`)
+  }
+
+  const getProductsByCategory = (category) =>
+    productsData.filter(p => p.category === category).slice(0, 4)
+
+  const isInCart = (id) => cart.some(item => item.id === id)
+
+  const handleAddToCartGuarded = (product) => {
+    if (!user) {
+      navigate('/signin')
+      return
+    }
+    addToCart(product)
+  }
 
   return (
-    <div>
-        <Navbar />
-        <Banner />
-        {sections.map(section => (
-          <section key={section.category} style={{ padding: '1rem clamp(1rem, 4vw, 3rem)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <h2 style={{ margin: 0 }}>{section.title}</h2>
-              <button
-                onClick={() => {
-                  clearFilter()
-                  setFilter('category', section.category)
-                  navigate('/products')
-                }}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #1f1f1f',
-                  color: '#f5f5f5',
-                  padding: '0.4rem 0.8rem',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                }}
-              >
-                View all
-              </button>
-            </div>
-            <ProductList
-              products={productsData.filter(p => p.category === section.category).slice(0, 4)}
-              onProductClick={handleProductClick}
-              onAddToCart={() => {}}
-              ctaLabel="Add to cart"
-            />
-          </section>
-        ))}
-        <Footer />
-    </div>
+    <>
+      <NavBar />
+      <Banner />
+
+      <main className={styles.home}>
+        <section className={styles.section}>
+          <ProductList
+            title="True Wireless"
+            products={getProductsByCategory('earbuds')}
+            onProductClick={handleProductClick}
+            onAddToCart={handleAddToCartGuarded}
+            isInCart={isInCart}
+            ctaLabel="Add to cart"
+            onViewAll={() => handleViewAll('earbuds')}
+          />
+        </section>
+
+        <section className={styles.section}>
+          <ProductList
+            title="Smart Watches"
+            products={getProductsByCategory('smartwatch')}
+            onProductClick={handleProductClick}
+            onAddToCart={handleAddToCartGuarded}
+            isInCart={isInCart}
+            ctaLabel="Add to cart"
+            onViewAll={() => handleViewAll('smartwatch')}
+          />
+        </section>
+
+        <section className={styles.section}>
+          <ProductList
+            title="Speakers"
+            products={getProductsByCategory('speaker')}
+            onProductClick={handleProductClick}
+            onAddToCart={handleAddToCartGuarded}
+            isInCart={isInCart}
+            ctaLabel="Add to cart"
+            onViewAll={() => handleViewAll('speaker')}
+          />
+        </section>
+      </main>
+
+      <Footer />
+    </>
   )
 }
