@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import NavBar from '../../components/navbar/NavBar'
+import NavBar from '../../components/navbar/Navbar'
 import Banner from '../../components/banner/Banner'
 import Footer from '../../components/footer/Footer'
 import ProductList, { productsData } from '../../components/productlist/ProductList'
