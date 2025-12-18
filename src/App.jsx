@@ -5,6 +5,7 @@ import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import Cart from './pages/cart/Cart'
 import Product from './pages/products/Product'
+
 // import About from './pages/about/About'
 export default function App() {
   return (
